@@ -2,10 +2,10 @@
 #include<math.h>
 #include<complex.h>
 
+#include "constants.h"
 #include "rfourier.h"
 
 typedef double complex dcomplex;
-extern const double cspeed, pi;
 /******************************************************************************/
 void four_out(int Nw, const dcomplex *ft, double wmin, double wmax,
         const char *fname){
