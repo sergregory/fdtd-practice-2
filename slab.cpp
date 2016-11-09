@@ -24,7 +24,7 @@ void slab(void){
     double dx = 10.0; // nm
     int Nx = 20000; // number of cells along x
     int ix0 = 9000; // center of the pulse at t=0
-    int Nslab = 200; // width of the slab
+    int Nslab = 400; // width of the slab
     int si1 = 10000;// start of the slab
     int si2 = si1+Nslab-1;// end of the slab
     int fi1 = 7500; // location of fourier transform
@@ -46,17 +46,17 @@ void slab(void){
     output_eps_x(Nx, eps, dx, tag);
     create_initial_dist(Nx, Dy, Hz, dx, dt, cspeed, ix0, tau, w0);
     update_Ey(Nx, Ey, Dy, eps);
-    output_Ey_vs_x(Nx, Ey, 0, dx, tag);
-    output_Hz_vs_x(Nx, Hz, 0, dx, tag);
+    /* output_Ey_vs_x(Nx, Ey, 0, dx, tag); */
+    /* output_Hz_vs_x(Nx, Hz, 0, dx, tag); */
     draw_Ey_vs_x(Nx, Ey, 0, dx, tag, fi1, fi2);
     draw_Hz_vs_x(Nx, Hz, 0, dx, tag, fi1, fi2);
     int T=0; // total steps
     int keyCode = cv::waitKey(0);
-    if (keyCode == 's') {
-        printf("Elapsed time -> %g fs (%d steps)\n", dt*(T), T);
-        output_Ey_vs_x(Nx, Ey, T, dx, tag);
-        output_Hz_vs_x(Nx, Hz, T, dx, tag);
-    }
+    /* if (keyCode == 's') { */
+    /*     printf("Elapsed time -> %g fs (%d steps)\n", dt*(T), T); */
+    /*     output_Ey_vs_x(Nx, Ey, T, dx, tag); */
+    /*     output_Hz_vs_x(Nx, Hz, T, dx, tag); */
+    /* } */
     double wmin = 0.8*w0; // rad/fs
     double wmax = 1.2*w0; // rad/fs
     int Nw=200;
