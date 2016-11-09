@@ -14,14 +14,14 @@ typedef double complex dcomplex;
 #include <opencv2/highgui.hpp>
 /******************************************************************************/
 void slab(void){
-    char *tag="e_1";
+    char *tag="e_2";
     // used to label output files
-    double eslab = 1.0; // permittivity of the slab
+    double eslab = 2.0; // permittivity of the slab
     /** Optical pulse ***/
-    double lambda0 = 1000; // nm
-    double tau = 8; // fs, width of the pulse
+    double lambda0 = 600; // nm
+    double tau = 5; // fs, width of the pulse
     /*** Computational parameters ***/
-    double dx = 20.0; // nm
+    double dx = 10.0; // nm
     int Nx = 20000; // number of cells along x
     int ix0 = 9000; // center of the pulse at t=0
     int Nslab = 200; // width of the slab
@@ -29,7 +29,7 @@ void slab(void){
     int si2 = si1+Nslab-1;// end of the slab
     int fi1 = 7500; // location of fourier transform
     int fi2 = si2+10; // location of fourier transform
-    double xi = 0.9;
+    double xi = 0.99;
     int No = 200; // defines the output rate
     int Nd = 10; // defines the draw rate
     /*** start execution ***/
@@ -80,7 +80,7 @@ void slab(void){
         if((T+1)%Nd == 0){
             draw_Ey_vs_x(Nx, Ey, 0, dx, tag, fi1, fi2);
             draw_Hz_vs_x(Nx, Hz, 0, dx, tag, fi1, fi2);
-            int keyCode = cv::waitKey(0);
+            int keyCode = cv::waitKey(0) & 0xFF;
             if (keyCode == 27) //ESC
                 break;
             if (keyCode == 's') {
