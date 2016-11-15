@@ -8,10 +8,11 @@ void update_Bz(int Nx, double *Bz, const double *Ey, double xi){
 }
 
 /******************************************************************************/
-void update_Dy(int Nx, double *Dy, const double *Hz, double xi){
+void update_Dy(int Nx, double *Dy, double *DyPrev, const double *Hz, double xi){
 
     // Ey[0]=0 always and not updated    
     for(int i=1; i < Nx; i++){
+        DyPrev[i] = Dy[i];
         Dy[i] +=-xi*(Hz[i]-Hz[i-1]);
     }
 }

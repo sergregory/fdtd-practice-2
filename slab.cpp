@@ -14,14 +14,16 @@ typedef double complex dcomplex;
 #include <opencv2/highgui.hpp>
 /******************************************************************************/
 void slab(void){
-    char *tag="e_2";
+    char *tag="e_1_var2";
     // used to label output files
-    double eslab = 2.0; // permittivity of the slab
     /** Optical pulse ***/
     double lambda0 = 600; // nm
     double tau = 5; // fs, width of the pulse
+    /** Slab parameters **/
+    double sigmaslab = 0;//get_absorption(lambda0); // absorption of the slab
+    double eslab = 1.; //2.0; // permittivity of the slab
     /*** Computational parameters ***/
-    double dx = 10.0; // nm
+    double dx = 20.0; // nm
     int Nx = 20000; // number of cells along x
     int ix0 = 9000; // center of the pulse at t=0
     int Nslab = 200; // width of the slab
@@ -37,15 +39,19 @@ void slab(void){
     double dt = xi*dx/cspeed; // in fs
     printf("dx=%.12e nm, dt=%.12e fs\n", dx, dt);
     /*** arrays for the fields ***/
-    double *fields = static_cast<double*>(malloc(3*Nx*sizeof(double)));
+    double *fields = static_cast<double*>(calloc(6*Nx, sizeof(double)));
     double *Hz = fields+0*Nx;
     double *Ey = fields+1*Nx;
-    double *Dy = fields+2*Nx;
-    double *eps = static_cast<double*>(malloc(Nx*sizeof(double)));
-    create_slab(Nx, eps, si1, si2, eslab);
+    double *EyPrev = fields+2*Nx;
+    double *Dy = fields+3*Nx;
+    double *DyPrev = fields+4*Nx;
+    double *SumEyTimePrev = fields+5*Nx;
+    double *eps = static_cast<double*>(calloc(Nx, sizeof(double)));
+    double *eta = static_cast<double*>(calloc(Nx, sizeof(double)));
+    create_slab(Nx, eps, eta, si1, si2, eslab, sigmaslab, dt);
     output_eps_x(Nx, eps, dx, tag);
     create_initial_dist(Nx, Dy, Hz, dx, dt, cspeed, ix0, tau, w0);
-    update_Ey(Nx, Ey, Dy, eps);
+    update_Ey_var2(Nx, Ey, SumEyTimePrev, Dy, eps, eta);
     output_Ey_vs_x(Nx, Ey, 0, dx, tag);
     output_Hz_vs_x(Nx, Hz, 0, dx, tag);
     draw_Ey_vs_x(Nx, Ey, 0, dx, tag, fi1, fi2);
@@ -73,9 +79,9 @@ void slab(void){
         /* for(int n=0; n<steps; n++, T++){ */
         update_Bz(Nx, Hz, Ey, xi);
         // find Bz at n+1/2
-        update_Dy(Nx, Dy, Hz, xi);
+        update_Dy(Nx, Dy, DyPrev, Hz, xi);
         // find Dy at n+1
-        update_Ey(Nx, Ey, Dy, eps); // find Ey at n+1
+        update_Ey_var2(Nx, Ey, SumEyTimePrev, Dy, eps, eta);
         /* output of Ey */
         if((T+1)%Nd == 0){
             draw_Ey_vs_x(Nx, Ey, 0, dx, tag, fi1, fi2);
@@ -105,6 +111,7 @@ void slab(void){
     four_out(Nw, ft1, wmin, wmax, fname1);
     four_out(Nw, ft2, wmin, wmax, fname2);
     free(fields); free(eps); free(ftall);
+    free(eta);
 }
 /*****************************************************************************/
 int main(void){
