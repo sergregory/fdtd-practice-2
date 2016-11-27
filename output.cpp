@@ -31,24 +31,26 @@ void output_Hz_vs_x(int Nx, const double *Hz, int T, double dx, const char *tag)
 }
 
 void draw_Ey_vs_x(int Nx, const double *Ey, int T, double dx, const char *tag, int fi1, int fi2){
-    cv::Mat img(400, Nx*dx / 100, CV_8UC1);
+    float scale = 300;
+    cv::Mat img(400, Nx*dx / scale, CV_8UC1);
     img.setTo(0);
     for(int i=0; i<Nx; i++){
-        img.at<uchar>((int)(200 - Ey[i]*100), i*dx / 100) = 255;
+        img.at<uchar>((int)(200 - Ey[i]*100), i*dx / scale) = 255;
     }
-    cv::line(img, cv::Point(fi1 * dx / 100, 0), cv::Point(fi1 * dx / 100, img.rows), 255);
-    cv::line(img, cv::Point(fi2 * dx / 100, 0), cv::Point(fi2 * dx / 100, img.rows), 255);
+    cv::line(img, cv::Point(fi1 * dx / scale, 0), cv::Point(fi1 * dx / scale, img.rows), 255);
+    cv::line(img, cv::Point(fi2 * dx / scale, 0), cv::Point(fi2 * dx / scale, img.rows), 255);
     cv::imshow("Ey", img);
 }
 
 void draw_Hz_vs_x(int Nx, const double *Hz, int T, double dx, const char *tag, int fi1, int fi2){
-    cv::Mat img(400, Nx*dx / 100, CV_8UC1);
+    float scale = 300;
+    cv::Mat img(400, Nx*dx / scale, CV_8UC1);
     img.setTo(0);
     for(int i=0; i<Nx; i++){
-        img.at<uchar>((int)(200 - Hz[i]*100), i*dx / 100) = 255;
+        img.at<uchar>((int)(200 - Hz[i]*100), i*dx / scale) = 255;
     }
-    cv::line(img, cv::Point(fi1 * dx / 100, 0), cv::Point(fi1 * dx / 100, img.rows), cv::Scalar::all(255));
-    cv::line(img, cv::Point(fi2 * dx / 100, 0), cv::Point(fi2 * dx / 100, img.rows), cv::Scalar::all(255));
+    cv::line(img, cv::Point(fi1 * dx / scale, 0), cv::Point(fi1 * dx / scale, img.rows), cv::Scalar::all(255));
+    cv::line(img, cv::Point(fi2 * dx / scale, 0), cv::Point(fi2 * dx / scale, img.rows), cv::Scalar::all(255));
     cv::imshow("Hz", img);
 }
 /*** END OF FILE **************************************************************/

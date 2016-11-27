@@ -20,13 +20,13 @@ void slab(void){
     double lambda0 = 600; // nm
     double tau = 5; // fs, width of the pulse
     /** Slab parameters **/
-    double sigmaslab = 0;//get_absorption(lambda0); // absorption of the slab
-    double eslab = 1.; //2.0; // permittivity of the slab
+    double sigmaslab = get_absorption(lambda0); // absorption of the slab
+    double eslab = 2.; //2.0; // permittivity of the slab
     /*** Computational parameters ***/
     double dx = 20.0; // nm
     int Nx = 20000; // number of cells along x
     int ix0 = 9000; // center of the pulse at t=0
-    int Nslab = 200; // width of the slab
+    int Nslab = 9985; // width of the slab
     int si1 = 10000;// start of the slab
     int si2 = si1+Nslab-1;// end of the slab
     int fi1 = 7500; // location of fourier transform
@@ -54,8 +54,8 @@ void slab(void){
     update_Ey_var2(Nx, Ey, SumEyTimePrev, Dy, eps, eta);
     output_Ey_vs_x(Nx, Ey, 0, dx, tag);
     output_Hz_vs_x(Nx, Hz, 0, dx, tag);
-    draw_Ey_vs_x(Nx, Ey, 0, dx, tag, fi1, fi2);
-    draw_Hz_vs_x(Nx, Hz, 0, dx, tag, fi1, fi2);
+    draw_Ey_vs_x(Nx, Ey, 0, dx, tag, si1, fi1);
+    draw_Hz_vs_x(Nx, Hz, 0, dx, tag, si1, fi1);
     int T=0; // total steps
     int keyCode = cv::waitKey(0);
     if (keyCode == 's') {
@@ -84,8 +84,8 @@ void slab(void){
         update_Ey_var2(Nx, Ey, SumEyTimePrev, Dy, eps, eta);
         /* output of Ey */
         if((T+1)%Nd == 0){
-            draw_Ey_vs_x(Nx, Ey, 0, dx, tag, fi1, fi2);
-            draw_Hz_vs_x(Nx, Hz, 0, dx, tag, fi1, fi2);
+            draw_Ey_vs_x(Nx, Ey, 0, dx, tag, fi1, si1);
+            draw_Hz_vs_x(Nx, Hz, 0, dx, tag, fi1, si1);
             int keyCode = cv::waitKey(0) & 0xFF;
             if (keyCode == 27) //ESC
                 break;
