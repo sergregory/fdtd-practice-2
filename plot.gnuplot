@@ -23,9 +23,9 @@ dx = 20
 L = 200 * dx 
 sqr(m) = m*m
 i = {0.0,1.0}
-sigma(omega) = 2 * omega
-eslab(epsilon, omega, omega0) = epsilon + i * 4 * pi * sigma(omega0) / omega 
-r(epsilon1, epsilon2, mu1, mu2, omega, omega0) = (1 - sqrt(eslab(epsilon2, omega, omega0) * mu1 / (eslab(epsilon1, omega, omega0) * mu2))) / (1 + sqrt(eslab(epsilon2, omega, omega0) * mu1 / (eslab(epsilon1, omega, omega0) * mu2)))
+sigma(lambda) = 4 * pi * c / lambda
+eslab(epsilon, omega, lambda) = epsilon + i * 4 * pi * sigma(lambda) / omega 
+r(epsilon1, epsilon2, mu1, mu2, omega) = (1 - sqrt(eslab(epsilon2, omega, lambda0) * mu1 / (eslab(epsilon1, omega, lambda0) * mu2))) / (1 + sqrt(eslab(epsilon2, omega, lambda0) * mu1 / (eslab(epsilon1, omega, lambda0) * mu2)))
 t(epsilon1, epsilon2, mu1, mu2, omega, omega0) = 1 - r(epsilon1, epsilon2, mu1, mu2, omega, omega0)
 
 set yrange [0 : 0.5]
@@ -60,7 +60,7 @@ unset yrange
 # set key outside center top maxrows 1
 # set ylabel "\|r\|^2"
 #plot "./_build/reflection.dat" u ($1):(sqr(abs($2)) + sqr(abs($3))) / (sqr(abs($5)) + sqr(abs($6))) with linespoints title "simul.", 
-plot "./_build/reflection.dat" u ($1):(sqr(abs(r(eps1, eps2, mu1, mu2, ($1), omega0)))) with lines title "theory" 
+plot "./_build/reflection.dat" u ($1):(sqr(abs(r(eps1, eps2, mu1, mu2, ($1))))) with lines title "theory" 
 # set size 1,0.45
 # set origin 0.0,0.55
 # set bmargin 1
