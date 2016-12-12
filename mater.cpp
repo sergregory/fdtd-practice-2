@@ -32,18 +32,20 @@ void output_eta_x(int Nx, const double *eta, double dx, const char *tag){
 }
 /******************************************************************************/
 
-void create_slab(int Nx, double *eps, double* eta, int j1, int j2,
-                 double eslab, double sigmaslab, double dt){
+void create_slab(int Nx, double *eps, double* eta, double* mu, int j1, int j2,
+                 double eslab, double sigmaslab, double muslab, double dt){
     /*
      * Creates array of dielectric permittivity
      */
     for(int i=0; i<Nx; i++){
         eps[i] = 1;
         eta[i] = 0;
+        mu[i] = 1;
     }
     for(int i=j1; i<j2+1; i++){
         eps[i] = eslab;
         eta[i] = 2*pi*sigmaslab*dt;
+        mu[i] = muslab;
     }
 }
 /******************************************************************************/
@@ -59,6 +61,22 @@ void update_Ey_var1(int Nx,
         Ey[i] = (eps[i] - eta[i]) / epsEtaSum * EyPrev[i] +
                 (Dy[i] - DyPrev[i]) / epsEtaSum;
         EyPrev[i] = Ey[i];
+    }
+}
+
+
+void update_Hz_var1(int Nx,
+                    double *Hz, double *HzPrev,
+                    const double *Bz, const double *BzPrev,
+                    const double *mu, const double* eta){
+    /*
+     * Calculates E from D, epsilon and eta
+     */
+    for(int i=0; i<Nx; i++){
+        double muEtaSum = mu[i] + eta[i];
+        Hz[i] = (mu[i] - eta[i]) / muEtaSum * HzPrev[i] +
+                (Bz[i] - BzPrev[i]) / muEtaSum;
+        HzPrev[i] = Hz[i];
     }
 }
 

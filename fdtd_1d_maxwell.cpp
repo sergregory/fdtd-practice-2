@@ -1,9 +1,11 @@
 /******************************************************************************/
-void update_Bz(int Nx, double *Bz, const double *Ey, double xi){
+void update_Bz(int Nx, double *Bz, double* BzPrev, const double *Ey, double xi){
     for(int i=0; i<Nx-1; i++){// except the last point
+        BzPrev[i] = Bz[i];
         Bz[i] +=-xi*(Ey[i+1]-Ey[i]);
     }
     int i=Nx-1; // last point
+    BzPrev[i] = Bz[i];
     Bz[i] +=-xi*(0.0 - Ey[i]);
 }
 

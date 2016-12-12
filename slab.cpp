@@ -22,8 +22,9 @@ void slab(void){
     /** Slab parameters **/
     double sigmaslab = get_absorption(lambda0); // absorption of the slab
     double eslab = 2.0; // permittivity of the slab
+    double muslab = 2.0; // permittivity of the slab
     /*** Computational parameters ***/
-    double dx = 5.0; // nm
+    double dx = 20.0; // nm
     int Nx = 20000; // number of cells along x
     int ix0 = 9000; // center of the pulse at t=0
     int Nslab = 9985; // width of the slab
@@ -31,7 +32,7 @@ void slab(void){
     int si2 = si1+Nslab-1;// end of the slab
     int fi1 = 7500; // location of fourier transform
     int fi2 = si1; // location of fourier transform
-    double xi = 0.999;
+    double xi = 0.90;
     int No = 200; // defines the output rate
     int Nd = 10; // defines the draw rate
     /*** start execution ***/
@@ -39,18 +40,23 @@ void slab(void){
     double dt = xi*dx/cspeed; // in fs
     printf("dx=%.12e nm, dt=%.12e fs\n", dx, dt);
     /*** arrays for the fields ***/
-    double *fields = static_cast<double*>(calloc(6*Nx, sizeof(double)));
-    double *Hz = fields+0*Nx;
-    double *Ey = fields+1*Nx;
-    double *EyPrev = fields+2*Nx;
-    double *Dy = fields+3*Nx;
-    double *DyPrev = fields+4*Nx;
-    double *SumEyTimePrev = fields+5*Nx;
+    double *fields = static_cast<double*>(calloc(9*Nx, sizeof(double)));
+    double *Bz = fields+0*Nx;
+    double *BzPrev = fields+1*Nx;
+    double *Hz = fields+2*Nx;
+    double *HzPrev = fields+3*Nx;
+    double *Ey = fields+4*Nx;
+    double *EyPrev = fields+5*Nx;
+    double *Dy = fields+6*Nx;
+    double *DyPrev = fields+7*Nx;
+    double *SumEyTimePrev = fields+8*Nx;
     double *eps = static_cast<double*>(calloc(Nx, sizeof(double)));
     double *eta = static_cast<double*>(calloc(Nx, sizeof(double)));
-    create_slab(Nx, eps, eta, si1, si2, eslab, sigmaslab, dt);
+    double *mu = static_cast<double*>(calloc(Nx, sizeof(double)));
+    create_slab(Nx, eps, eta, mu, si1, si2, eslab, sigmaslab, muslab, dt);
     output_eps_x(Nx, eps, dx, tag);
-    create_initial_dist(Nx, Dy, Hz, dx, dt, cspeed, ix0, tau, w0);
+    create_initial_dist(Nx, Dy, Bz, dx, dt, cspeed, ix0, tau, w0);
+    /* update_Hz_var1(Nx, Hz, HzPrev, Bz, BzPrev, mu, eta); */
     update_Ey_var1(Nx, Ey, EyPrev, Dy, DyPrev, eps, eta);
     /* update_Ey_var2(Nx, Ey, SumEyTimePrev, Dy, eps, eta); */
     output_Ey_vs_x(Nx, Ey, 0, dx, tag);
@@ -72,13 +78,8 @@ void slab(void){
     dcomplex *ft2 = ftall + 1*Nw;
     zset_mem(2*Nw, ftall, 0.0+I*0.0); // both parts of complex
     for(;;++T){
-        /* printf("Number of steps to run (<=0 to exit) -> "); fflush(stdout); */
-        /* int steps; */
-        /* scanf("%d", &steps); */
-        /* if(steps<=0) break; */
-        /* printf("Making %d steps\n", steps); */
-        /* for(int n=0; n<steps; n++, T++){ */
-        update_Bz(Nx, Hz, Ey, xi);
+        update_Bz(Nx, Bz, BzPrev, Ey, xi);
+        update_Hz_var1(Nx, Hz, HzPrev, Bz, BzPrev, mu, eta);
         // find Bz at n+1/2
         update_Dy(Nx, Dy, DyPrev, Hz, xi);
         // find Dy at n+1
