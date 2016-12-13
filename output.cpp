@@ -31,7 +31,7 @@ void output_Hz_vs_x(int Nx, const double *Hz, int T, double dx, const char *tag)
 }
 
 void draw_Ey_vs_x(int Nx, const double *Ey, int T, double dx, const char *tag, int fi1, int fi2){
-    float scale = 300;
+    float scale = 40;
     cv::Mat img(400, Nx*dx / scale, CV_8UC1);
     img.setTo(0);
     for(int i=0; i<Nx; i++){
@@ -43,7 +43,7 @@ void draw_Ey_vs_x(int Nx, const double *Ey, int T, double dx, const char *tag, i
 }
 
 void draw_Hz_vs_x(int Nx, const double *Hz, int T, double dx, const char *tag, int fi1, int fi2){
-    float scale = 300;
+    float scale = 40;
     cv::Mat img(400, Nx*dx / scale, CV_8UC1);
     img.setTo(0);
     for(int i=0; i<Nx; i++){

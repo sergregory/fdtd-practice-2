@@ -4,6 +4,7 @@
 #include <math.h>
 #include <complex.h>
 typedef double complex dcomplex;
+#include <cstdlib>
 #include "fdtd_1d_maxwell.h"
 #include "pulse.h"
 #include "output.h"
@@ -12,33 +13,35 @@ typedef double complex dcomplex;
 #include "rfourier.h"
 #include "constants.h"
 #include <opencv2/highgui.hpp>
+#include <iostream>
 /******************************************************************************/
-void slab(void){
+void slab(double sigmaslab, int Nslab){
     char *tag="e_2_s_var2";
     // used to label output files
     /** Optical pulse ***/
     double lambda0 = 600; // nm
     double tau = 5; // fs, width of the pulse
     /** Slab parameters **/
-    double sigmaslab = get_absorption(lambda0); // absorption of the slab
-    double eslab = 2.0; // permittivity of the slab
-    double muslab = 2.0; // permittivity of the slab
+    /* double sigmaslab = get_absorption(lambda0); // absorption of the slab */
+    double eslab = 1.0; // permittivity of the slab
+    double muslab = 1.0; // permittivity of the slab
     /*** Computational parameters ***/
-    double dx = 20.0; // nm
-    int Nx = 20000; // number of cells along x
-    int ix0 = 9000; // center of the pulse at t=0
-    int Nslab = 9985; // width of the slab
-    int si1 = 10000;// start of the slab
-    int si2 = si1+Nslab-1;// end of the slab
+    double dx = 5.0; // nm
+    int Nx = 10000; // number of cells along x
+    int ix0 = 5000; // center of the pulse at t=0
+    /* int Nslab = 9985; // width of the slab */
+    int si2 = Nx-1;// end of the slab
+    int si1 = si2 - Nslab - 1;// start of the slab
     int fi1 = 7500; // location of fourier transform
     int fi2 = si1; // location of fourier transform
-    double xi = 0.90;
+    double xi = 0.99999;
     int No = 200; // defines the output rate
     int Nd = 10; // defines the draw rate
     /*** start execution ***/
     double w0 = 2*pi*cspeed/lambda0; // rad/fs
     double dt = xi*dx/cspeed; // in fs
     printf("dx=%.12e nm, dt=%.12e fs\n", dx, dt);
+    printf("Nslab=%.12e nm, pulse_width=%.12e nm\n", Nslab*dx, cspeed*tau);
     /*** arrays for the fields ***/
     double *fields = static_cast<double*>(calloc(9*Nx, sizeof(double)));
     double *Bz = fields+0*Nx;
@@ -56,13 +59,13 @@ void slab(void){
     create_slab(Nx, eps, eta, mu, si1, si2, eslab, sigmaslab, muslab, dt);
     output_eps_x(Nx, eps, dx, tag);
     create_initial_dist(Nx, Dy, Bz, dx, dt, cspeed, ix0, tau, w0);
-    /* update_Hz_var1(Nx, Hz, HzPrev, Bz, BzPrev, mu, eta); */
+    update_Hz_var1(Nx, Hz, HzPrev, Bz, BzPrev, mu, eta);
     update_Ey_var1(Nx, Ey, EyPrev, Dy, DyPrev, eps, eta);
     /* update_Ey_var2(Nx, Ey, SumEyTimePrev, Dy, eps, eta); */
     output_Ey_vs_x(Nx, Ey, 0, dx, tag);
     output_Hz_vs_x(Nx, Hz, 0, dx, tag);
-    draw_Ey_vs_x(Nx, Ey, 0, dx, tag, si1, fi1);
-    draw_Hz_vs_x(Nx, Hz, 0, dx, tag, si1, fi1);
+    draw_Ey_vs_x(Nx, Ey, 0, dx, tag, si1, si2);
+    draw_Hz_vs_x(Nx, Hz, 0, dx, tag, si1, si2);
     int T=0; // total steps
     int keyCode = cv::waitKey(0);
     if (keyCode == 's') {
@@ -87,8 +90,8 @@ void slab(void){
         update_Ey_var1(Nx, Ey, EyPrev, Dy, DyPrev, eps, eta);
         /* output of Ey */
         if((T+1)%Nd == 0){
-            draw_Ey_vs_x(Nx, Ey, 0, dx, tag, fi1, si1);
-            draw_Hz_vs_x(Nx, Hz, 0, dx, tag, fi1, si1);
+            draw_Ey_vs_x(Nx, Ey, 0, dx, tag, si1, si2);
+            draw_Hz_vs_x(Nx, Hz, 0, dx, tag, si1, si2);
             int keyCode = cv::waitKey(0) & 0xFF;
             if (keyCode == 27) //ESC
                 break;
@@ -117,7 +120,14 @@ void slab(void){
     free(eta);
 }
 /*****************************************************************************/
-int main(void){
-    slab();
+int main(int argc, char** argv){
+    if(argc != 3) {
+        std::cerr << "Incorrect number of arguments\n";
+        return 0;
+    }
+
+    double sigma = atof(argv[1]);
+    int nslab = atoi(argv[2]);
+    slab(sigma, nslab);
     return 0;
 }
