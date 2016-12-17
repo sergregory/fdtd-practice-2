@@ -26,9 +26,9 @@ def get_reflection_ratio(eta_from, eta_to):
     return (eta_from - eta_to) / (eta_to + eta_from)
 
 
-def plot_simul():
-    incident_pulse_file = "ft_fi=10000_e_1_var2.dat"
-    reflected_pulse_file = "ft_fi=7500_e_2_s_var2.dat"
+def plot_simul(suffix, style):
+    incident_pulse_file = "ft_fi=10000_e_1_var" + suffix + ".dat"
+    reflected_pulse_file = "ft_fi=7500_e_2_s_var" + suffix + ".dat"
     incident_data = np.loadtxt(incident_pulse_file)
     reflected_data = np.loadtxt(reflected_pulse_file)
 
@@ -37,7 +37,7 @@ def plot_simul():
     reflected = reflected_data[:, 1] + 1j * reflected_data[:, 2]
 
     reflectedion_coeff = np.square(np.abs(reflected / incident))
-    pl.plot(freq_range, reflectedion_coeff, label="simul")
+    pl.plot(freq_range, reflectedion_coeff, label="alg 1." + suffix, color='black', linestyle=style)
 
 
 def plot_theory():
@@ -54,11 +54,13 @@ def plot_theory():
     reflection = get_reflection_ratio(np.ones(len(slab_impedance)),
                                       slab_impedance)
     # printer.pprint(np.square(np.abs(reflection)))
-    pl.plot(freq_range, np.square(np.abs(reflection)), label="theory")
+    pl.plot(freq_range, np.square(np.abs(reflection)), label="theory", color="black")
 
 
 if __name__ == "__main__":
     plot_theory()
-    plot_simul()
+    plot_simul('1', 'dashed')
+    plot_simul('2', 'dotted')
     pl.legend()
+    pl.grid()
     pl.show()

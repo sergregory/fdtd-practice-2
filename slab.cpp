@@ -14,14 +14,14 @@ typedef double complex dcomplex;
 #include <opencv2/highgui.hpp>
 /******************************************************************************/
 void slab(void){
-    char *tag="e_1_var2";
+    char *tag="e_2_s_var2";
     // used to label output files
     /** Optical pulse ***/
     double lambda0 = 600; // nm
     double tau = 5; // fs, width of the pulse
     /** Slab parameters **/
-    double sigmaslab = 0.;//get_absorption(lambda0); // absorption of the slab
-    double eslab = 1.0; // permittivity of the slab
+    double sigmaslab = get_absorption(lambda0); // absorption of the slab
+    double eslab = 2.0; // permittivity of the slab
     /*** Computational parameters ***/
     double dx = 5.0; // nm
     int Nx = 20000; // number of cells along x
