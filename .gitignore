@@ -1,0 +1,4 @@
+*.dat
+*.pdf
+tags
+_build
