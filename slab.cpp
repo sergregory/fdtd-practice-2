@@ -14,14 +14,14 @@ typedef double complex dcomplex;
 #include <opencv2/highgui.hpp>
 /******************************************************************************/
 void slab(void){
-    char *tag="e_2_s_var2";
+    char *tag="e_1_var2";
     // used to label output files
     /** Optical pulse ***/
     double lambda0 = 600; // nm
     double tau = 5; // fs, width of the pulse
     /** Slab parameters **/
-    double sigmaslab = get_absorption(lambda0); // absorption of the slab
-    double eslab = 2.0; // permittivity of the slab
+    double sigmaslab = 0.;//get_absorption(lambda0); // absorption of the slab
+    double eslab = 1.0; // permittivity of the slab
     /*** Computational parameters ***/
     double dx = 5.0; // nm
     int Nx = 20000; // number of cells along x
@@ -31,7 +31,7 @@ void slab(void){
     int si2 = si1+Nslab-1;// end of the slab
     int fi1 = 7500; // location of fourier transform
     int fi2 = si1; // location of fourier transform
-    double xi = 0.999;
+    double xi = 0.99999;
     int No = 200; // defines the output rate
     int Nd = 10; // defines the draw rate
     /*** start execution ***/
@@ -51,8 +51,8 @@ void slab(void){
     create_slab(Nx, eps, eta, si1, si2, eslab, sigmaslab, dt);
     output_eps_x(Nx, eps, dx, tag);
     create_initial_dist(Nx, Dy, Hz, dx, dt, cspeed, ix0, tau, w0);
-    update_Ey_var1(Nx, Ey, EyPrev, Dy, DyPrev, eps, eta);
-    /* update_Ey_var2(Nx, Ey, SumEyTimePrev, Dy, eps, eta); */
+    /* update_Ey_var1(Nx, Ey, EyPrev, Dy, DyPrev, eps, eta); */
+    update_Ey_var2(Nx, Ey, SumEyTimePrev, Dy, eps, eta);
     output_Ey_vs_x(Nx, Ey, 0, dx, tag);
     output_Hz_vs_x(Nx, Hz, 0, dx, tag);
     draw_Ey_vs_x(Nx, Ey, 0, dx, tag, si1, fi1);
@@ -82,8 +82,8 @@ void slab(void){
         // find Bz at n+1/2
         update_Dy(Nx, Dy, DyPrev, Hz, xi);
         // find Dy at n+1
-        /* update_Ey_var2(Nx, Ey, SumEyTimePrev, Dy, eps, eta); */
-        update_Ey_var1(Nx, Ey, EyPrev, Dy, DyPrev, eps, eta);
+        update_Ey_var2(Nx, Ey, SumEyTimePrev, Dy, eps, eta);
+        /* update_Ey_var1(Nx, Ey, EyPrev, Dy, DyPrev, eps, eta); */
         /* output of Ey */
         if((T+1)%Nd == 0){
             draw_Ey_vs_x(Nx, Ey, 0, dx, tag, fi1, si1);

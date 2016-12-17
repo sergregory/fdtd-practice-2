@@ -2,15 +2,18 @@
 documentclass: report
 ---
 
-# Компьютерное моделирование электромагнитных процессов - ДЗ 1
+# Компьютерное моделирование электромагнитных процессов - ДЗ 3
 
 ## Задание 1
 
-Что будет происходить, если задать электрическое поле в виде импульса в
-момент $n=0$, но использовать нулевое значение магнитного поля при $n=-1/2$? Объяснить
-результат.
+Создать в вакууме начальный импульс с длиной волны $\lambda_0=600$ нм и длительностью $t=5$ фс. Найти численно и построить коэффициент отражения от полупространства с $\epsilon=2$ при наличии поглощения с $\sigma=2\omega_0$, где $\omega_0=2\pi c / \lambda_0$. Сравнить с аналитической зависимостью.
 
 **Ответ**
+
+Аналитическая зависимость коэффициента отражения от частоты выглядит следующим образом:
+$$
+r = \frac{\eta_1 - \eta_2}{\eta_1 + \eta_2} = \frac{\sqrt{\frac{\epsilon_1}{\mu_1}} - \sqrt{\frac{\epsilon_2}{\mu_2}}}{\sqrt{\frac{\epsilon_1}{\mu_1}} + \sqrt{\frac{\epsilon_2}{\mu_2}}} = \frac{\sqrt{\epsilon_1} - \sqrt{\epsilon_2}}{\sqrt{\epsilon_1} + \sqrt{\epsilon_2}}
+$$
 Рассмотрим уравнения Максвелла для нашего одномерного случая:
 $$
 \left\{
@@ -50,28 +53,28 @@ $$
 
 Подтвердим результатами моделирования:
 
-\begin{figure}[H]
-\centering
-{\includegraphics{img/E_T_0_30.pdf}}
-\caption{Распространение импульса E, $T\in [0, 30]$}
-\end{figure}
+<!-- \begin{figure}[H] -->
+<!-- \centering -->
+<!-- {\includegraphics{img/E_T_0_30.pdf}} -->
+<!-- \caption{Распространение импульса E, $T\in [0, 30]$} -->
+<!-- \end{figure} -->
 
-\begin{figure}[H]
-\centering
-{\includegraphics{img/H_T_0_30.pdf}}
-\caption{Распространение импульса H, $T\in [0, 30]$}
-\end{figure}
+<!-- \begin{figure}[H] -->
+<!-- \centering -->
+<!-- {\includegraphics{img/H_T_0_30.pdf}} -->
+<!-- \caption{Распространение импульса H, $T\in [0, 30]$} -->
+<!-- \end{figure} -->
 
-\begin{figure}[H]
-\centering
-{\includegraphics{img/E_T>30.pdf}}
-\caption{Распространение импульса Е, T=0, T>30}
-\end{figure}
-\begin{figure}[H]
-\centering
-{\includegraphics{img/H_T>30.pdf}}
-\caption{Распространение импульса H, T=0, T>30}
-\end{figure}
+<!-- \begin{figure}[H] -->
+<!-- \centering -->
+<!-- {\includegraphics{img/E_T>30.pdf}} -->
+<!-- \caption{Распространение импульса Е, T=0, T>30} -->
+<!-- \end{figure} -->
+<!-- \begin{figure}[H] -->
+<!-- \centering -->
+<!-- {\includegraphics{img/H_T>30.pdf}} -->
+<!-- \caption{Распространение импульса H, T=0, T>30} -->
+<!-- \end{figure} -->
 
 ## Задание 2
 
@@ -107,16 +110,16 @@ $$
 
 Подтвердим результатами моделирования:
 
-\begin{figure}[H]
-\centering
-{\includegraphics{img/task2_E.pdf}}
-\caption{Отражение от границы импульса E}
-\end{figure}
-\begin{figure}[H]
-\centering
-{\includegraphics{img/task2_H.pdf}}
-\caption{Отражение от границы импульса H}
-\end{figure}
+<!-- \begin{figure}[H] -->
+<!-- \centering -->
+<!-- {\includegraphics{img/task2_E.pdf}} -->
+<!-- \caption{Отражение от границы импульса E} -->
+<!-- \end{figure} -->
+<!-- \begin{figure}[H] -->
+<!-- \centering -->
+<!-- {\includegraphics{img/task2_H.pdf}} -->
+<!-- \caption{Отражение от границы импульса H} -->
+<!-- \end{figure} -->
 
 
 
