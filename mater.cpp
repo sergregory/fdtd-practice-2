@@ -3,7 +3,7 @@
 #include "constants.h"
 /******************************************************************************/
 double get_absorption(const double lambda) {
-    return 0.04;//2 * 2 * pi * cspeed / lambda;
+    return 2 * 2 * pi * cspeed / lambda;
 }
 
 void output_eps_x(int Nx, const double *eps, double dx, const char *tag){

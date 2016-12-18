@@ -15,8 +15,8 @@ typedef double complex dcomplex;
 #include <opencv2/highgui.hpp>
 #include <iostream>
 /******************************************************************************/
-void slab(double sigmaslab, int Nslab){
-    char *tag="e_2_s_var2";
+void slab(double sigmaslab, int Nslab, const char* tag){
+    /* char *tag="e_2_s_var2"; */
     // used to label output files
     /** Optical pulse ***/
     double lambda0 = 600; // nm
@@ -57,22 +57,22 @@ void slab(double sigmaslab, int Nslab){
     double *eta = static_cast<double*>(calloc(Nx, sizeof(double)));
     double *mu = static_cast<double*>(calloc(Nx, sizeof(double)));
     create_slab(Nx, eps, eta, mu, si1, si2, eslab, sigmaslab, muslab, dt);
-    output_eps_x(Nx, eps, dx, tag);
+    /* output_eps_x(Nx, eps, dx, tag); */
     create_initial_dist(Nx, Dy, Bz, dx, dt, cspeed, ix0, tau, w0);
     update_Hz_var1(Nx, Hz, HzPrev, Bz, BzPrev, mu, eta);
     update_Ey_var1(Nx, Ey, EyPrev, Dy, DyPrev, eps, eta);
     /* update_Ey_var2(Nx, Ey, SumEyTimePrev, Dy, eps, eta); */
     output_Ey_vs_x(Nx, Ey, 0, dx, tag);
     output_Hz_vs_x(Nx, Hz, 0, dx, tag);
-    draw_Ey_vs_x(Nx, Ey, 0, dx, tag, si1, si2);
-    draw_Hz_vs_x(Nx, Hz, 0, dx, tag, si1, si2);
+    /* draw_Ey_vs_x(Nx, Ey, 0, dx, tag, si1, si2); */
+    /* draw_Hz_vs_x(Nx, Hz, 0, dx, tag, si1, si2); */
     int T=0; // total steps
-    int keyCode = cv::waitKey(0);
-    if (keyCode == 's') {
-        printf("Elapsed time -> %g fs (%d steps)\n", dt*(T), T);
-        output_Ey_vs_x(Nx, Ey, T, dx, tag);
-        output_Hz_vs_x(Nx, Hz, T, dx, tag);
-    }
+    /* int keyCode = cv::waitKey(0); */
+    /* if (keyCode == 's') { */
+    /*     printf("Elapsed time -> %g fs (%d steps)\n", dt*(T), T); */
+    /*     output_Ey_vs_x(Nx, Ey, T, dx, tag); */
+    /*     output_Hz_vs_x(Nx, Hz, T, dx, tag); */
+    /* } */
     double wmin = 0.8*w0; // rad/fs
     double wmax = 1.2*w0; // rad/fs
     int Nw=200;
@@ -80,7 +80,7 @@ void slab(double sigmaslab, int Nslab){
     dcomplex *ft1 = ftall + 0*Nw;
     dcomplex *ft2 = ftall + 1*Nw;
     zset_mem(2*Nw, ftall, 0.0+I*0.0); // both parts of complex
-    for(;;++T){
+    for(;T < 12000;++T){
         update_Bz(Nx, Bz, BzPrev, Ey, xi);
         update_Hz_var1(Nx, Hz, HzPrev, Bz, BzPrev, mu, eta);
         // find Bz at n+1/2
@@ -89,18 +89,18 @@ void slab(double sigmaslab, int Nslab){
         /* update_Ey_var2(Nx, Ey, SumEyTimePrev, Dy, eps, eta); */
         update_Ey_var1(Nx, Ey, EyPrev, Dy, DyPrev, eps, eta);
         /* output of Ey */
-        if((T+1)%Nd == 0){
-            draw_Ey_vs_x(Nx, Ey, 0, dx, tag, si1, si2);
-            draw_Hz_vs_x(Nx, Hz, 0, dx, tag, si1, si2);
-            int keyCode = cv::waitKey(0) & 0xFF;
-            if (keyCode == 27) //ESC
-                break;
-            if (keyCode == 's') {
-                printf("Elapsed time -> %g fs (%d steps)\n", dt*(T+1), T+1);
-                /* output_Ey_vs_x(Nx, Ey, T+1, dx, tag); */
-                /* output_Hz_vs_x(Nx, Hz, T+1, dx, tag); */
-            }
-        }
+        /* if((T+1)%Nd == 0){ */
+        /*     draw_Ey_vs_x(Nx, Ey, 0, dx, tag, si1, si2); */
+        /*     draw_Hz_vs_x(Nx, Hz, 0, dx, tag, si1, si2); */
+        /*     int keyCode = cv::waitKey(0) & 0xFF; */
+        /*     if (keyCode == 27) //ESC */
+        /*         break; */
+        /*     if (keyCode == 's') { */
+        /*         printf("Elapsed time -> %g fs (%d steps)\n", dt*(T+1), T+1); */
+        /*         /1* output_Ey_vs_x(Nx, Ey, T+1, dx, tag); *1/ */
+        /*         /1* output_Hz_vs_x(Nx, Hz, T+1, dx, tag); *1/ */
+        /*     } */
+        /* } */
         /* output of Hz */
         if((T+1)%No == 0){
             printf("Elapsed time -> %g fs (%d steps)\n", dt*(T+1), T+1);
@@ -108,26 +108,32 @@ void slab(double sigmaslab, int Nslab){
             /* output_Hz_vs_x(Nx, Hz, T+1, dx, tag); */
         }
         /*** take running fourier ***/
-        double time=dt*(T+1); // for Ey
-        rfourier2(wmin, wmax, Nw, ft1, ft2, Ey[fi1], Ey[fi2], dt, time);
+        /* double time=dt*(T+1); // for Ey */
+        /* rfourier2(wmin, wmax, Nw, ft1, ft2, Ey[fi1], Ey[fi2], dt, time); */
     }// end of global loop
-    char fname1[100], fname2[100];
-    sprintf(fname1, "ft_fi=%d_%s.dat", fi1, tag);
-    sprintf(fname2, "ft_fi=%d_%s.dat", fi2, tag);
-    four_out(Nw, ft1, wmin, wmax, fname1);
-    four_out(Nw, ft2, wmin, wmax, fname2);
+    {    
+        printf("Elapsed time -> %g fs (%d steps)\n", dt*(T+1), T+1);
+        output_Ey_vs_x(Nx, Ey, T+1, dx, tag);
+        output_Hz_vs_x(Nx, Hz, T+1, dx, tag);
+    }
+    /* char fname1[100], fname2[100]; */
+    /* sprintf(fname1, "ft_fi=%d_%s.dat", fi1, tag); */
+    /* sprintf(fname2, "ft_fi=%d_%s.dat", fi2, tag); */
+    /* four_out(Nw, ft1, wmin, wmax, fname1); */
+    /* four_out(Nw, ft2, wmin, wmax, fname2); */
     free(fields); free(eps); free(ftall);
     free(eta);
 }
 /*****************************************************************************/
 int main(int argc, char** argv){
-    if(argc != 3) {
+    if(argc != 4) {
         std::cerr << "Incorrect number of arguments\n";
         return 0;
     }
 
     double sigma = atof(argv[1]);
     int nslab = atoi(argv[2]);
-    slab(sigma, nslab);
+    const char* tag = argv[3];
+    slab(sigma, nslab, tag);
     return 0;
 }
