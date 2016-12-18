@@ -91,6 +91,7 @@ def load_pulse_values(file_list):
 
 def load_data(files):
     from collections import namedtuple
+    from matplotlib.lines import Line2D
 
     initial_E_pulse_files = {k: v for k, v in files.items()
                              if v['time'] == '0' and v['type'] == 'Ey'}
@@ -109,16 +110,19 @@ def load_data(files):
     # reflected_H_pulse_values = PulseValues(*load_pulse_values(reflected_H_pulse_files))
 
     # plot reflection vs sigma
-    for idx, slab_width in enumerate(initial_E_pulse_values.width):
-        initial = initial_E_pulse_values.values[:, idx]
-        reflected = reflected_E_pulse_values.values[:, idx]
-        r_coeff = reflected / initial
-        pl.plot(initial_E_pulse_values.sigma, r_coeff, label=r'$N='+str(slab_width)+'$')
-    pl.xlabel(r'$\sigma$')
-    pl.ylabel(r'$\max E_y^{reflected} / \max E_y^{incident}$')
-    pl.legend()
-    pl.grid()
-    pl.show()
+    pl.style.use('grayscale')
+    linestyles = ['-', '--', ':','-.']
+    markers = ('o', 'v', '^', '<', '>', '8', 's', 'p', '*', 'h', 'H', 'D', 'd')
+    # for idx, slab_width in enumerate(initial_E_pulse_values.width):
+    #     initial = initial_E_pulse_values.values[:, idx]
+    #     reflected = reflected_E_pulse_values.values[:, idx]
+    #     r_coeff = reflected / initial
+    #     pl.plot(initial_E_pulse_values.sigma, r_coeff, label=r'$N='+str(slab_width)+'$')
+    # pl.xlabel(r'$\sigma$')
+    # pl.ylabel(r'$\max E_y^{reflected} / \max E_y^{incident}$')
+    # pl.legend()
+    # pl.grid()
+    # pl.show()
     # plot reflection vs N
     for idx, slab_sigma in enumerate(initial_E_pulse_values.sigma):
         if idx not in [0, 1, 2, 4, len(initial_E_pulse_values.sigma)-1]:
@@ -126,7 +130,13 @@ def load_data(files):
         initial = initial_E_pulse_values.values[idx, :]
         reflected = reflected_E_pulse_values.values[idx, :]
         r_coeff = reflected / initial
-        pl.plot(initial_E_pulse_values.width, r_coeff, label=r'$\sigma='+str(slab_sigma)+'$')
+        dt = 0.99999 * 5. / c / 1E-6
+        slab_eta = 2 * pi * slab_sigma * dt
+        pl.plot(initial_E_pulse_values.width, r_coeff,
+                linestyles[idx%len(linestyles)],
+                label=r'$\eta={:.3f}$'.format(slab_eta),
+                marker=markers[idx%len(markers)],
+                color='k')
     pl.xlabel(r'N (number of cells in slab)')
     pl.ylabel(r'$\max E_y^{reflected}/ \max E_y^{incident}$')
     pl.legend()
