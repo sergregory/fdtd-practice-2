@@ -62,5 +62,7 @@ if __name__ == "__main__":
     plot_simul('1', 'dashed')
     plot_simul('2', 'dotted')
     pl.legend()
+    pl.xlabel(r'$\omega$, rad/fs')
+    pl.ylabel(r'$\|r\|^2$')
     pl.grid()
     pl.show()
